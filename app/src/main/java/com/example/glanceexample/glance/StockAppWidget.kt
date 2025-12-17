@@ -2,6 +2,8 @@ package com.example.glanceexample.glance
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -23,7 +25,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
-import kotlin.time.Duration
+import java.time.Duration
 
 class StockAppWidget : GlanceAppWidget() {
 
@@ -74,17 +76,20 @@ class StockAppWidget : GlanceAppWidget() {
             style = textStyle)
         Text("${PriceDataRepo.change} %", style = textStyle)
     }
-}
 
 
-@Composable
-fun GlanceContent() {
-    Column(
-        modifier = GlanceModifier
+    @Composable
+    fun GlanceContent() {
+        val stateCount by PriceDataRepo.currentPrice.collectAsState()
+        Small(stateCount)
+    }
+    @Composable
+    private fun Small(stateCount: Float) {
+        Column(modifier = GlanceModifier
             .fillMaxSize()
             .background(GlanceTheme.colors.background)
-            .padding(8.dp)
-    ) {
-        Text("Demo")
+            .padding(8.dp)) {
+            StockDisplay(stateCount)
+        }
     }
 }
